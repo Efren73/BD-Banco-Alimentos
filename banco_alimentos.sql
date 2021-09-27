@@ -51,10 +51,19 @@ CREATE TABLE BODEGA(
 
 CREATE TABLE ALMACENISTA(
     id int,
-    bodega int,
+    idBodega int,
     PRIMARY KEY(id),
     FOREIGN KEY(id) REFERENCES USUARIO(id),
-    FOREIGN KEY(bodega) REFERENCES BODEGA(id)
+    FOREIGN KEY(idBodega) REFERENCES BODEGA(id)
+);
+
+
+CREATE TABLE RUTA(
+    id int AUTO_INCREMENT,
+    idOperador int,
+    dia enum('Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo') NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(idOperador) REFERENCES OPERADOR(id)
 );
 
 CREATE TABLE TIENDA(
@@ -65,26 +74,11 @@ CREATE TABLE TIENDA(
     direccion varchar(50),
     municipio varchar(30),
     telefono int,
-    idAdmin int, 
+    idAdmin int,
+    idRuta int, 
     PRIMARY KEY(id),
-    FOREIGN KEY(idAdmin) REFERENCES ADMINISTRADOR(id)
-);
-
-CREATE TABLE RUTA(
-    id int AUTO_INCREMENT,
-    operadorId int,
-    dia enum('Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo') NOT NULL,
-    PRIMARY KEY(id, operadorId),
-    FOREIGN KEY(operadorId) REFERENCES OPERADOR(id)
-);
-
-CREATE TABLE RUTA_TIENDA(
-    idRuta int,
-    idOperador int,
-    idTienda int,
-    PRIMARY KEY(idRuta, idOperador, idTienda),
-    FOREIGN KEY(idRuta, idOperador) REFERENCES RUTA(id, operadorId),
-    FOREIGN KEY(idTienda) REFERENCES TIENDA(id)
+    FOREIGN KEY(idAdmin) REFERENCES ADMINISTRADOR(id),
+    FOREIGN KEY (idRuta) REFERENCES RUTA(id)
 );
 
 CREATE TABLE DONATIVO(
@@ -96,17 +90,16 @@ CREATE TABLE DONATIVO(
     folio int,
     estatus enum('Pendiente', 'Completado'),
     fecha date,
-    responsable varchar(40),
-    puesto_responsable varchar(20),
-    rutaId int, 
-    operadorId int,
-    tiendaId int,
+    responsable varchar(45),
+    puesto_responsable varchar(20), 
+    idOperador int,
+    idTienda int,
     PRIMARY KEY (id),
-    FOREIGN KEY (rutaId, operadorId) REFERENCES RUTA_TIENDA(idRuta, idOperador),
-    FOREIGN KEY (tiendaId) REFERENCES RUTA_TIENDA(idTienda)
+    FOREIGN KEY (idOperador) REFERENCES OPERADOR(id),
+    FOREIGN KEY (idTienda) REFERENCES TIENDA(id)
 );
 
-CREATE TABLE DONATIVO_BODEGA(
+CREATE TABLE ENTREGA_DONATIVO(
     idDonativo int, 
     idBodega int,
     kg_frutas_verduras int,
@@ -129,16 +122,16 @@ CREATE TABLE DONATIVO_ESPONTANEO(
     folio int,
     estatus enum('Pendiente', 'Completado'),
     fecha date,
-    responsable varchar(40),
+    responsable varchar(45),
     puesto_responsable varchar(20),
-    operadorId int, 
-    tiendaId int,
+    idOperador int, 
+    idTienda int,
     PRIMARY KEY(id),
-    FOREIGN KEY(operadorId) REFERENCES OPERADOR(id),
-    FOREIGN KEY(tiendaId) REFERENCES TIENDA(id)
+    FOREIGN KEY(idOperador) REFERENCES OPERADOR(id),
+    FOREIGN KEY(idTienda) REFERENCES TIENDA(id)
 );
 
-CREATE TABLE DONATIVOESPONTANEO_BODEGA(
+CREATE TABLE entrega_donativo_espontaneo(
     idDonativo int, 
     idBodega int,
     kg_frutas_verduras int,
@@ -151,5 +144,3 @@ CREATE TABLE DONATIVOESPONTANEO_BODEGA(
     FOREIGN KEY(idDonativo) REFERENCES DONATIVO_ESPONTANEO(id),
     FOREIGN KEY(idBodega) REFERENCES BODEGA(id)
 );
-
-
